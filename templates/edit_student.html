@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Student Details</title>
+</head>
+<body>
+    <h2>Edit Student Details</h2>
+    <form action="{{ url_for('update_student', student_id=student['id']) }}" method="POST">
+        <label>Name:</label>
+        <input type="text" name="newname" value="{{ student['name'] }}" required>
+        <br>
+        <label>Student ID:</label>
+        <input type="number" name="newroll" value="{{ student['id'] }}" required>
+        <br>
+        <label>Email ID:</label>
+        <input type="email" name="newemail" value="{{ student['email'] }}" required>
+        <br>
+        <button type="submit">Update Details</button>
+    </form>
+</body>
+</html>

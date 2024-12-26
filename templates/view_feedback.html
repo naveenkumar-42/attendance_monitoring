@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: wheat;
+            margin: 20px;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .no-feedback {
+            text-align: center;
+            color: #888;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Feedback Submissions</h2>
+
+    {% if feedback_list %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date Submitted</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedback_list %}
+            <tr>
+                <td>{{ feedback.name }}</td>
+                <td>{{ feedback.email }}</td>
+                <td>{{ feedback.feedback }}</td>
+                <td>{{ feedback.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="no-feedback">No feedback available.</div>
+    {% endif %}
+</body>
+</html>

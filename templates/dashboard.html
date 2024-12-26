@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Attendance Dashboard</h2>
+    <canvas id="attendanceChart" width="400" height="200"></canvas>
+
+    <script>
+        const userId = 'USER_ID'; // Replace with actual user ID
+
+        fetch(`/api/user/${userId}/attendance`)
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(item => item.date);  // Assuming attendance data includes a date field
+                const attendanceCounts = data.map(item => item.attendance);  // Assuming attendance data has a count field
+
+                const ctx = document.getElementById('attendanceChart').getContext('2d');
+                const attendanceChart = new Chart(ctx, {
+                    type: 'line', // or 'bar', 'pie' based on your preference
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Attendance',
+                            data: attendanceCounts,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

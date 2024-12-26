@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <title>Login</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            background-color: whitesmoke;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #3d3c3c;
+            border-radius: 5px;
+        }
+
+        .btn {
+            width: 40%;
+            padding: 8px;
+            font-size: 18px;
+            background-color: #343a40;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            background-color: #f44336;
+        }
+
+        .btn:hover {
+            background-color: #d32f2f;
+        }
+
+        #forgot-password {
+            display: block;
+            margin-top: 15px;
+            color: #0066cc;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        #forgot-password:hover {
+            color: #0044aa;
+        }
+
+        #google-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #757575;
+            font-size: 16px;
+            padding: 12px;
+            cursor: pointer;
+            transition: box-shadow 0.3s, background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        #google-login-btn img {
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        #google-login-btn:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f5f5f5;
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            .form-group input {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .btn {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            #google-login-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+
+        .login {
+            color: black;
+            font-size: 32px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 40px;
+            top: 53%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .toggle-password img {
+            width: 25px;
+            height: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <h1 class="login">Admin Login</h1><br>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form id="login-form">
+            <div class="form-group">
+                <input type="email" id="email" name="email" placeholder="Email" required>
+            </div>
+            <div class="form-group password-container">
+                    <input type="password" id="password" name="password" placeholder="Password">
+                    <span id="toggle-password" class="toggle-password"
+                    style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;">
+                            😖
+                        </span>
+            </div>
+
+            <button type="button" class="btn" id="email-login-btn">Login</button>
+        </form>
+
+        <a id="forgot-password">Forgot Password?</a>
+
+        <div id="google-login-btn">
+            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+                alt="Google Logo">
+            <span>Login with Google</span>
+        </div>
+
+        <div id="user-info"></div>
+    </div>
+
+    <script type="module">
+        // Firebase authentication setup script
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOdKI7-hV3BvPvJEPQRuJot-qx9SSSjE0",
+            authDomain: "attendance-df720.firebaseapp.com",
+            projectId: "attendance-df720",
+            storageBucket: "attendance-df720.appspot.com",
+            messagingSenderId: "468265145415",
+            appId: "1:468265145415:web:66c44f94216104b0e0cd62",
+            measurementId: "G-7T9JGB4FGQ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const emailLoginBtn = document.getElementById('email-login-btn');
+        const forgotPasswordLink = document.getElementById('forgot-password');
+        const userInfo = document.getElementById('user-info');
+
+        googleLoginBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    fetch('/set_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username: user.displayName })
+                    })
+                        .then(() => {
+                            window.location.href = "/";
+                        });
+                })
+                .catch((error) => {
+                    console.error('Error during sign-in:', error);
+                    userInfo.innerHTML = `Error: ${error.message}`;
+                });
+        });
+
+        // Update email sign-in logic with Firebase
+        emailLoginBtn.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    fetch('/set_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: user.email })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Token generated") {
+                                window.location.href = "/";
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error during email sign-in:', error);
+                            userInfo.innerHTML = `Error: ${error.message}`;
+                        });
+                })
+                .catch((error) => {
+                    console.error('Error during email sign-in:', error);
+                    userInfo.innerHTML = `Error: ${error.message}`;
+                });
+        });
+        forgotPasswordLink.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address to reset your password.');
+                return;
+            }
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert('Password reset email sent! Check your inbox.');
+                })
+                .catch((error) => {
+                    console.error('Error during password reset:', error);
+                    userInfo.innerHTML = `Error: ${error.message}`;
+                });
+        });
+        // Toggle password visibility with emoji
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordField = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            togglePassword.textContent = type === 'password' ? '😖' : '🤓';
+        });
+
+    </script>
+
+</body>
+
+</html>

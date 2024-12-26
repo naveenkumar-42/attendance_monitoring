@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <title>Edit User</title>
+
+    <style type='text/css'>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image: url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            font-family: sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 30%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 5px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="text-center">Edit User</h1>
+
+        <form action="" method="POST">
+            <div class="form-group">
+                <label for="newname">New Name</label>
+                <input type="text" id="newname" name="newname" value="{{ user['name'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="newroll">New ID</label>
+                <input type="number" id="newroll" name="newroll" value="{{ user['id'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="newemail">New Email</label>
+                <input type="email" id="newemail" name="newemail" value="{{ user['email'] }}" required>
+            </div>
+            <button type="submit" class="btn btn-dark">Update User</button>
+        </form>
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('home') }}" class="btn btn-info">Back to Home</a>
+        </div>
+    </div>
+    
+</body>
+
+</html>
