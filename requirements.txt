@@ -1,0 +1,17 @@
+Flask
+opencv-python
+numpy
+joblib
+scikit-learn
+gtts
+pygame
+cryptography
+pymongo
+gspread
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+gspread-formatting
+requests
+pytz
